@@ -1,7 +1,7 @@
 {
     "name": "lrh/docker",
     "description": "docker operation composer",
-    "type": "composer-plugin",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-
+        
     },
     "autoload": {
         "psr-4": {
