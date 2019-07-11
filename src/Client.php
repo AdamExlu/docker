@@ -1,7 +1,7 @@
 <?php
 namespace lrh\docker;
-// use Docker\Docker;
-// use Docker\DockerClientFactory;
+use Docker\Docker;
+use Docker\DockerClientFactory;
 
 class Client 
 {
@@ -32,6 +32,17 @@ class Client
         $this->docker = $docker;
         return $docker;
     }
+
+    /**
+     * 获取容器列表
+     * @param Docker\Docker
+     * @return
+     * @throws \Http\Client\Socket\Exception\ConnectionException
+     */
+    public function getContainerList()
+    {
+        if ($this->docker == null) throw new Exception('无法获取容器列表，未连接docker');
+        $containers = $this->docker->containerList(['all' => true]);
+        return $containers;
+    }
 }
-
-
