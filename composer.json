@@ -11,7 +11,8 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "docker-php/docker-php": "^2.0@dev"
+        "docker-php/docker-php": "^2.0@dev",
+        "jane-php/open-api-runtime": "4.2.0"
     },
     "autoload": {
         "psr-4": {
