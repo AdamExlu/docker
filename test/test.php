@@ -20,4 +20,6 @@ if( $res['status'] ){
         echo '容器创建成功！';
     else
         echo '容器创建失败！';
+}else{
+    echo $res['info'];
 }
