@@ -2,10 +2,11 @@
 namespace lrh\docker;
 use Docker\Docker;
 use Docker\DockerClientFactory;
-// use lrh\docker\model\ContainerConfig;
+use lrh\docker\model\ContainerConfig;
 use Docker\API\Model\ContainersCreatePostBody;
 use Docker\API\Model\PortBinding;
 use Docker\API\Model\HostConfig;
+use Docker\API\Model\RestartPolicy;
 
 
 class Client 
@@ -58,17 +59,23 @@ class Client
      * 创建容器
      * @param \lrh\docker\model\ContainerConfig $config
      */
-    public function createContainer( $config )
+    public function createContainer( ContainerConfig $config )
     {
         try{
             $containerConfig = new ContainersCreatePostBody();
 
+            //设置镜像
             $containerConfig->setImage($config->getImage());
+            //交互设置
             $containerConfig->setAttachStdin(true);
             $containerConfig->setAttachStdout(true);
             $containerConfig->setAttachStderr(true);
             $containerConfig->setTty(true);
             $containerConfig->setOpenStdin(true);
+            //重启策略
+            $restart_policy = new RestartPolicy;
+            $restart_policy->steName('unless-stopped');
+            $containerConfig->setRestartPolicy($restart_policy);
 
             //绑定端口
             if( !empty($config->getPorts()) )
@@ -103,7 +110,7 @@ class Client
      * @param array $ports 容器端口 [ container_port => host_port ]
      * @return ContainersCreatePostBody $containerConfig
      */
-    protected function bindPort($containerConfig, $ports)
+    protected function bindPort( ContainersCreatePostBody $containerConfig, array $ports )
     {
         $exposedPorts = new \ArrayObject();
         $portMap = new \ArrayObject();
@@ -139,7 +146,7 @@ class Client
      * @param array $volumes
      * @return ContainersCreatePostBody $containerConfig
      */
-    protected function bindVolumes($containerConfig, $volumes)
+    protected function bindVolumes( ContainersCreatePostBody $containerConfig, array $volumes )
     {
         if ($containerConfig->getHostConfig() == NULL)
             $hostConfig = new HostConfig();
@@ -157,7 +164,7 @@ class Client
      * @param int $memorySetting bytes
      * @return ContainersCreatePostBody $containerConfig
      */
-    protected function limitMemory($containerConfig, $memory)
+    protected function limitMemory( ContainersCreatePostBody $containerConfig, $memory )
     {
         if ($containerConfig->getHostConfig() == NULL)
             $hostConfig = new HostConfig();
@@ -174,7 +181,7 @@ class Client
      * 根据id暂停容器
      * @param string $id    容器id
      */
-    public function stopContainer($id)
+    public function stopContainer( string $id )
     {
         try{
             $this->docker->containerStop($id);
@@ -190,7 +197,7 @@ class Client
      * 根据id开启容器
      * @param string $id    容器id
      */
-    public function startContainer($id)
+    public function startContainer( string $id )
     {
         try{
             $this->docker->containerStart($id);
